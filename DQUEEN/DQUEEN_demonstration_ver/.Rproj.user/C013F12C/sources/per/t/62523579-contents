@@ -1,0 +1,1341 @@
+ui <-
+  tagList(
+  tags$head(tags$script(type="text/javascript", src = "logo.js")),
+  navbarPage(
+    theme = shinytheme("cerulean"),
+    title = 'DQUEEN',
+    tabPanel('DQ Summary'
+             ,tabsetPanel(type = "tabs"
+                          #Page 1-1
+                          ,tabPanel("Summary",icon = icon('table',lib = 'font-awesome')
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3('Check Level'))
+                                      ,column(2,align='center',tags$h3('DQ Score'))
+                                      ,column(2,align='center',tags$h3('Data Status'))
+                                      ,column(2,align='center',tags$h3('Data population'))
+                                      ,column(2,align='center',tags$h3('Data period'))
+                                      ,column(2,align='center',tags$h3('Data Volume'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(CheckLevel))
+                                      ,column(2,align='center',tags$h3(totalScore))
+                                      ,column(2,align='center',tags$h3(DataStatus))
+                                      ,column(2,align='center',tags$h4(paste0('META :',metaPopulation)),tags$h4(paste0('CDM :',cdmPopulation)))
+                                      ,column(2,align='center',tags$h3(DataPeriod))
+                                      ,column(2,align='center',tags$h4(paste0('META :',dbVolumn[dbVolumn =='Meta','volumn'],'GB'))
+                                              ,tags$h4(paste0('CDM :',dbVolumn[dbVolumn =='CDM','volumn'],'GB')))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center'
+                                             ,tags$h2('Data Quality Score'))
+                                      ,tags$h2('Data Quality Proportion')
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("s1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "s1", title = "Data Quality Score"
+                                                        ,content = 'This score is average of the source data and OMOP-CDM data quality score'
+                                                        ,placement = "right"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(4,align='right'
+                                              ,bsButton("s2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "s2", title = "Source data DQ error proportion"
+                                                         ,content = 'Rate of DQ error data by Data Quality Assessment category in the data'
+                                                         ,placement = "right"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                      ,column(4,align='right'
+                                              ,bsButton("s3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "s3", title = "CDM DQ error proportion"
+                                                         ,content = 'Rate of DQ error data by Data Quality Assessment category in the data'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+
+                                    )
+                                    ,fluidRow(
+                                      column(offset = 4,4,align='center',tags$h3('META')
+                                      )
+                                      ,column(4,align='center',tags$h3('CDM')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align = 'center'
+                                             ,ggiraphOutput('Main_scoreDonutPlot',width="80%",height = '400px')
+
+                                      )
+                                      ,column(4
+                                              ,tags$div(id="metaRader", style="height:400px;")  # Specify the div for the chart. Can also be considered as a space holder
+                                              ,deliverChart(div_id = "metaRader")  # Deliver the plotting
+                                      )
+                                      ,column(4
+                                              ,tags$div(id="cdmRader", style="height:400px;")  # Specify the div for the chart. Can also be considered as a space holder
+                                              ,deliverChart(div_id = "cdmRader")  # Deliver the plotting
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ Error Propotion'))
+                                      ,column(4,align='center',tags$h2('Person Count'))
+                                      ,column(4,align='center',tags$h2('Observation period per year'))
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("s4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "s4", title = "Sum of the Data Quality error propotion"
+                                                        ,content = 'Sum of data error by data quality assessment category from the source and CDM data. through this plot you would know what is major cause of data quality error'
+                                                        ,placement = "right"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(4,align='right'
+                                              ,bsButton("s5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "s5", title = 'Number of patients by gender'
+                                                         ,content = 'The comparison of the number of the patients can check the CDM conversion error'
+                                                         ,placement = "right"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                      ,column(4,align='right'
+                                              ,bsButton("s6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "s6", title = 'The number of patients per year that can be observed'
+                                                         ,content = 'The number of observation patients per year in the oprating period also you can compared source and CDM data'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align = 'center'
+                                             ,tags$div(id="errorPropotionAll", style="width:100%;height:300px;") # Specify the div for the chart. Can also be considered as a space holder
+                                             ,deliverChart(div_id = "errorPropotionAll") # Deliver the plotting
+                                      )
+                                      ,column(4,align = 'center'
+                                              ,tags$div(id="personCount", style="width:100%;height:300px;")
+                                              ,deliverChart(div_id = "personCount")
+
+                                      )
+                                      ,column(4,align = 'center'
+                                              ,tags$div(id="operationPeriod", style="width:100%;height:300px;")
+                                              ,deliverChart(div_id = "operationPeriod")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,tags$h2('Source to CDM Data Network')
+                                    ,column(12
+                                            ,align='right'
+                                            ,bsButton("s7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                            ,bsPopover(id = "s7", title = "Source to CDM data flow"
+                                                       ,content = 'You can check the relationship and conversion flow between source to Meta data also you can compared row number source data and CDM data'
+                                                       ,placement = "left"
+                                                       ,trigger = "focus"
+                                                       ,options = list(container = "body")
+                                            )
+                                    )
+                                    #visNetwork
+                                    ,fluidRow(
+                                      column(8,
+                                             visNetworkOutput("network")
+                                      )
+                                      ,column(4,
+                                              tableOutput("shiny_return")
+                                      )
+                                    )
+                          )
+
+             )
+
+    ),
+    #DQ Summary---------------------------------------------------------------
+
+    #Meta DQ Information------------------------------------------------------
+    tabPanel('Meta DQ Information'
+             ,tabsetPanel(type = "tabs"
+                          ,id = 'metaTabs'
+                          ,tabPanel("Main",icon = icon('table',lib = 'font-awesome')
+                                    ,fluidRow(
+                                      column(12,tags$h2('DQ Summary - Meta(Source)'))
+                                    )
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3('Check Level'))
+                                      ,column(2,align='center',tags$h3('DQ Score'))
+                                      ,column(2,align='center',tags$h3('Data Status'))
+                                      ,column(2,align='center',tags$h3('Data population'))
+                                      ,column(2,align='center',tags$h3('Data period'))
+                                      ,column(2,align='center',tags$h3('Data Volume'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(CheckLevel))
+                                      ,column(2,align='center',tags$h3(metaScore))
+                                      ,column(2,align='center',tags$h3(DataStatus))
+                                      ,column(2,align='center',tags$h3(paste0('META :',metaPopulation)))
+                                      ,column(2,align='center',tags$h3(DataPeriod))
+                                      ,column(2,align='center',tags$h3(paste0('META :',dbVolumn[dbVolumn =='Meta','volumn'],'GB')))
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("m1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "m1", title = "Meta schema information"
+                                                        ,content = 'you can know brief information about the meta schema '
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2
+                                             ,align = 'center'
+                                             ,ggiraphOutput('metaMainScoreDonut')
+                                      )
+                                      ,column(2,ggiraphOutput('metaMainPlausibiltyDonut'))
+                                      ,column(2,ggiraphOutput('metaMainAccuracyDonut'))
+                                      ,column(2,ggiraphOutput('metaMainCompletenessDonut'))
+                                      ,column(2,ggiraphOutput('metaMainConformanceDonut'))
+                                      ,column(2,ggiraphOutput('metaMainConsistencyDonut'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(paste('Current Score :',DqScore)))
+                                      ,column(2,align='center',tags$h3('Plausibilty'))
+                                      ,column(2,align='center',tags$h3('Accuracy'))
+                                      ,column(2,align='center',tags$h3('Completeness'))
+                                      ,column(2,align='center',tags$h3('Conformance'))
+                                      ,column(2,align='center',tags$h3('Consistency'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ error proportion')
+                                      )
+                                      ,column(8,align = 'left',tags$h2('DQ error distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("m2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "m2", title = "DQA category error propotion"
+                                                        ,content = 'if you choose DQA concept you can see how many DQ concept distributed in initial table'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(8,align = 'right'
+                                              ,bsButton("m3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "m3", title = "distribution of DQA error in table"
+                                                         ,content = 'You can know how many DQA error in initial table'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='center'
+                                             ,plotlyOutput("metaMainErrorPlot")
+                                      )
+                                      ,column(8,align = 'left'
+                                              ,plotlyOutput("metaMainQualityDistribution")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('DQ error message box')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("m4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "m4", title = "DQA error message box"
+                                                        ,content = 'You can check the DQA rules and how many errors occurred'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,DT::dataTableOutput('metaMainErrorData'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('Schema information'))
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("m5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "m5", title = "visualized schema information"
+                                                        ,content = 'You can know schema volume and row information'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,highchartOutput('metaHitmap')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("m6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "m6", title = "schema information"
+                                                        ,content = 'You can check volume and table rows'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+
+                                    )
+                                    ,fluidRow(
+                                      column(12,DT::dataTableOutput('metaHitmapTable')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(6,tags$h2('Table yearly row count')
+                                      )
+                                      ,column(6,tags$h2('Table yearly row count by visit type')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("m7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "m7", title = "yearly row count with yearly visit"
+                                                        ,content = 'The number of visits of patients and the rate of change of data should be proportional. if one of the year is not proportional it may you need check'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("m8", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "m8", title = "yearly row count by visit type with patients yearly visit type"
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,plotlyOutput('metaHitmapTableOutput')
+                                      )
+                                      ,column(6,plotlyOutput('metaHitmapTableOutput2')
+                                      )
+                                    )
+
+                          )
+                          ,tabPanel("Person",    icon = icon('user-alt',lib = 'font-awesome')
+                                    ,tags$h2('DQ info')
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("mp1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mp1", title = "DQA error proportion in person table"
+                                                        ,content = 'You can check DQA error proportion and DQ score'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2
+                                             ,align = 'center'
+                                             ,ggiraphOutput('metaPersonScoreDonut')
+                                      )
+                                      ,column(2,ggiraphOutput('metaPersonPlausibiltyDonut'))
+                                      ,column(2,ggiraphOutput('metaPersonAccuracyDonut'))
+                                      ,column(2,ggiraphOutput('metaPersonCompletenessDonut'))
+                                      ,column(2,ggiraphOutput('metaPersonConformanceDonut'))
+                                      ,column(2,ggiraphOutput('metaPersonConsistencyDonut'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(paste('Current Score :',DqScore)))
+                                      ,column(2,align='center',tags$h3('Plausibilty'))
+                                      ,column(2,align='center',tags$h3('Accuracy'))
+                                      ,column(2,align='center',tags$h3('Completeness'))
+                                      ,column(2,align='center',tags$h3('Conformance'))
+                                      ,column(2,align='center',tags$h3('Consistency'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ error proportion')
+                                      )
+                                      ,column(8,align = 'left',tags$h2('DQ error distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("mp2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mp2", title = "Error rate by DQA category"
+                                                        ,content = 'If you click the DQA category then you can see how many errors in this table with hist and hist shows based on DQA subcategory'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(8,align = 'right'
+                                              ,bsButton("mp3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "mp3", title = "DQA error distibution in table"
+                                                         ,content = 'Hist shows based on DQA subcategory'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='center'
+                                             ,plotlyOutput("metaPersonErrorPlot")
+                                      )
+                                      ,column(8,align = 'left'
+                                              ,plotlyOutput("metaPersonQualityDistribution")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12
+                                             ,column(12,tags$h2('DQ error message box'))
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("mp4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mp4", title = "DQA error message box"
+                                                        ,content = 'you can see DQA rules and how many errors occurred in table '
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,column(12
+                                                     ,DT::dataTableOutput('metaPersonErrorData'))
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(6,tags$h2('Person count')
+                                      )
+                                      ,column(6,tags$h2('Year of birth distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("mp5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mp5", title = "Person count"
+                                                        ,content = 'Y means exlcude patinets and N means include patients so you can see click Y or N'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("mp6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "mp6", title = "Year of birth distribution"
+                                                         ,content = 'You can check birth date error and distribution of patinets age'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,tags$div(id="metaPatientClassificationPlot", style="width:100%;height:300px;")
+                                             ,deliverChart(div_id = "metaPatientClassificationPlot")
+                                      )
+                                      ,column(6
+                                              ,tags$div(id="metaPersonBirthPlot", style="width:100%;height:300px;")
+                                              ,deliverChart(div_id = "metaPersonBirthPlot")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('Table basic DQ information')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("mp7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mp7", title = "It's basic information about table"
+                                                        ,content = 'You can check dupliclated row or column and missing data also special char '
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,DT::dataTableOutput('metaPersonInfoData')
+                                      )
+                                    )
+
+
+                          )
+                          ,tabPanel("Visit",icon = icon('hospital',lib = 'font-awesome')
+                                    ,tags$h2('DQ info')
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("mv1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv1", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2
+                                             ,align = 'center'
+                                             ,ggiraphOutput('metaVisitScoreDonut')
+                                      )
+                                      ,column(2,ggiraphOutput('metaVisitPlausibiltyDonut'))
+                                      ,column(2,ggiraphOutput('metaVisitAccuracyDonut'))
+                                      ,column(2,ggiraphOutput('metaVisitCompletenessDonut'))
+                                      ,column(2,ggiraphOutput('metaVisitConformanceDonut'))
+                                      ,column(2,ggiraphOutput('metaVisitConsistencyDonut'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(paste('Current Score :',DqScore)))
+                                      ,column(2,align='center',tags$h3('Plausibilty'))
+                                      ,column(2,align='center',tags$h3('Accuracy'))
+                                      ,column(2,align='center',tags$h3('Completeness'))
+                                      ,column(2,align='center',tags$h3('Conformance'))
+                                      ,column(2,align='center',tags$h3('Consistency'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ error proportion')
+                                      )
+                                      ,column(8,align = 'left',tags$h2('DQ error distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("mv2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv2", title = "Visit table DQ information"
+                                                        ,content = 'You can know DQ score and DQA error rate'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+
+                                      )
+                                      ,column(8,align = 'right'
+                                              ,bsButton("mv3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "mv3", title = "Error rate by DQA category"
+                                                         ,content = 'if you choose DQA category you can see how many DQA errors in this table through the hist'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='center'
+                                             ,plotlyOutput("metaVisitErrorPlot")
+
+                                      )
+                                      ,column(8,align = 'left'
+                                              ,plotlyOutput("metaVisitQualityDistribution")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('DQ error message box')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("mv4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv4", title = "DQA errror hist"
+                                                        ,content = 'Th9is hist shows how many DQA errors in the table based on DQA subcategory'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,DT::dataTableOutput('metaVisitErrorData'))
+                                    )
+                                    ,tags$hr()
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(6,tags$h2('Visit count by year ')
+                                      )
+                                      ,column(6,tags$h2('Visit type count by year')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("mv5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv5", title = "DQ error message box about this table"
+                                                        ,content = 'You can check DQA rules and how many DQA errors occurred in this table'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("mv6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "mv6", title = "yearly visit count"
+                                                         ,content = 'we provieds the observed percentile 10 based on the number of yearly count. please check for value below 10 percentile or change treds year data'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotlyOutput('metaVisitCountPlot')
+                                      )
+                                      ,column(6
+                                              ,plotlyOutput('metaVisitDataPlot')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(6,tags$h2('visit length of one patient')
+                                      )
+                                      ,column(6,tags$h2('Descriptive statistics')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("mv7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv7", title = "visit type count by year"
+                                                        ,content = 'we provieds the observed percentile 25 based on the number of yearly count. please check for value below 25 percentile or change treds year data'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("mv8", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "mv8", title = "visit length check by visit type "
+                                                         ,content = 'If the observed value is abnormal by checking the minimum, maximum, or median values, check the error.'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotOutput('metaVisitLengthStaticPlot')
+                                      )
+                                      ,column(6
+                                              ,DT::dataTableOutput('metaVisitLengthPlot')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(6,tags$h2('Daily visit count by visit type')
+                                      )
+                                      ,column(6,tags$h2('Descriptive statistics')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("mv9", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv9", title = "Daily visit count per patinets"
+                                                        ,content = 'we are check initial patients how many visit in hospital one days'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("mv10", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "mv10", title = "Descriptive statics of daily visit"
+                                                         ,content = 'If you fined a outlier value, please check the data'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotlyOutput('metaDaliyVisitTypePlot')
+                                      )
+                                      ,column(6
+                                              ,DT::dataTableOutput('metaDaliyVisitInfoData')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('Table basic DQ information')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("mv11", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "mv11", title = "Table basic information"
+                                                        ,content = 'You can check dupliclated row or column and missing data also special char '
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+
+                                      )
+                                    )
+
+                                    ,fluidRow(
+                                      column(12
+                                             ,DT::dataTableOutput('metaVisitInfoData')
+                                      )
+                                    )
+
+
+                          )
+             )
+    ),
+
+
+
+
+    #Meta DQ Information------------------------------------------------------
+    #CDM DQ Information-------------------------------------------------------
+    tabPanel('CDM DQ Information'
+             # Page 5-1
+             ,tabsetPanel(type = "tabs"
+                          ,id = 'cdmTabs'
+                          ,tabPanel("Main",icon = icon('table',lib = 'font-awesome')
+                                    ,tags$h2('DQ Summary - OMOP CDM(v5.3)')
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3('Check Level'))
+                                      ,column(2,align='center',tags$h3('DQ Score'))
+                                      ,column(2,align='center',tags$h3('Data Status'))
+                                      ,column(2,align='center',tags$h3('Data population'))
+                                      ,column(2,align='center',tags$h3('Data period'))
+                                      ,column(2,align='center',tags$h3('Data Volume'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(CheckLevel))
+                                      ,column(2,align='center',tags$h3(cdmMainScore))
+                                      ,column(2,align='center',tags$h3(DataStatus))
+                                      ,column(2,align='center',tags$h3(paste0('CDM :',cdmPopulation)))
+                                      ,column(2,align='center',tags$h3(DataPeriod))
+                                      ,column(2,align='center',tags$h3(paste0('CDM :',dbVolumn[dbVolumn =='CDM','volumn'],'GB')))
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("c1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "c1", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2
+                                             ,align = 'center'
+                                             ,ggiraphOutput('cdmMainScoreDonut')
+                                      )
+                                      ,column(2,ggiraphOutput('cdmMainPlausibiltyDonut'))
+                                      ,column(2,ggiraphOutput('cdmMainAccuracyDonut'))
+                                      ,column(2,ggiraphOutput('cdmMainCompletenessDonut'))
+                                      ,column(2,ggiraphOutput('cdmMainConformanceDonut'))
+                                      ,column(2,ggiraphOutput('cdmMainConsistencyDonut'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(paste('Current Score :',DqScore)))
+                                      ,column(2,align='center',tags$h3('Plausibilty'))
+                                      ,column(2,align='center',tags$h3('Accuracy'))
+                                      ,column(2,align='center',tags$h3('Completeness'))
+                                      ,column(2,align='center',tags$h3('Conformance'))
+                                      ,column(2,align='center',tags$h3('Consistency'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ error proportion')
+                                      )
+                                      ,column(8,align = 'left',tags$h2('DQ error distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("c2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "c2", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(8,align='right'
+                                              ,bsButton("c3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "c3", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='centear'
+                                             ,plotlyOutput("cdmMainErrorPlot")
+                                      )
+                                      ,column(8,align = 'left'
+                                              ,plotlyOutput("cdmMainQualityDistribution")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('DQ error message box'))
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("c4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "c4", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,DT::dataTableOutput('cdmMainErrorData'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('Schema information')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("c5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "c5", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,highchartOutput('cdmHitmap')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,align='right'
+                                             ,bsButton("c6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "c6", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,DT::dataTableOutput('cdmHitmapTable')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(6,tags$h2('Table yearly row count')
+                                      )
+                                      ,column(6,tags$h2('Table yearly row count by visit type')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("c7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "c7", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("c8", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "c8", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotlyOutput('cdmHitmapTableOutput')
+                                      )
+                                      ,column(6
+                                              ,plotlyOutput('cdmHitmapTableOutput2')
+                                      )
+                                    )
+
+                          )
+
+                          ,tabPanel("Person",    icon = icon('user-alt',lib = 'font-awesome')
+                                    ,tags$h2('DQ info')
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("cp1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cp1", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2
+                                             ,align = 'center'
+                                             ,ggiraphOutput('cdmPersonScoreDonut')
+                                      )
+                                      ,column(2,ggiraphOutput('cdmPersonPlausibiltyDonut'))
+                                      ,column(2,ggiraphOutput('cdmPersonAccuracyDonut'))
+                                      ,column(2,ggiraphOutput('cdmPersonCompletenessDonut'))
+                                      ,column(2,ggiraphOutput('cdmPersonConformanceDonut'))
+                                      ,column(2,ggiraphOutput('cdmPersonConsistencyDonut'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(paste('Current Score :',DqScore)))
+                                      ,column(2,align='center',tags$h3('Plausibilty'))
+                                      ,column(2,align='center',tags$h3('Accuracy'))
+                                      ,column(2,align='center',tags$h3('Completeness'))
+                                      ,column(2,align='center',tags$h3('Conformance'))
+                                      ,column(2,align='center',tags$h3('Consistency'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ error proportion')
+                                      )
+                                      ,column(8,align = 'left',tags$h2('DQ error distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("cp2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cp2", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(8,align='right'
+                                              ,bsButton("cp3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "cp3", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4
+                                             ,plotlyOutput("cdmPersonErrorPlot")
+                                      )
+                                      ,column(8,align = 'left'
+                                              ,plotlyOutput("cdmPersonQualityDistribution")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('DQ error message box'))
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("cp4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cp4", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,DT::dataTableOutput('cdmPersonErrorData'))
+                                    )
+                                    ,tags$hr()
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(6,tags$h2('Person count')
+                                      )
+                                      ,column(6,tags$h2('Year of birth distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("cp5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cp5", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("cp6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "cp6", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,tags$div(id="cdmPatientClassificationPlot", style="width:100%;height:300px;")
+                                             ,deliverChart(div_id = "cdmPatientClassificationPlot")
+                                      )
+                                      ,column(6
+                                              ,tags$div(id="cdmPersonBirthPlot", style="width:100%;height:300px;")
+                                              ,deliverChart(div_id = "cdmPersonBirthPlot")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('Table basic DQ information')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("cp7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cp7", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,DT::dataTableOutput('cdmPersonInfoData'))
+                                    )
+
+
+                          )
+                          ,tabPanel("Visit",icon = icon('hospital',lib = 'font-awesome')
+                                    ,tags$h2('DQ info')
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("cv1", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv1", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(2
+                                             ,align = 'center'
+                                             ,ggiraphOutput('cdmVisitScoreDonut')
+                                      )
+                                      ,column(2,ggiraphOutput('cdmVisitPlausibiltyDonut'))
+                                      ,column(2,ggiraphOutput('cdmVisitAccuracyDonut'))
+                                      ,column(2,ggiraphOutput('cdmVisitCompletenessDonut'))
+                                      ,column(2,ggiraphOutput('cdmVisitConformanceDonut'))
+                                      ,column(2,ggiraphOutput('cdmVisitConsistencyDonut'))
+                                    )
+                                    ,fluidRow(
+                                      column(2,align='center',tags$h3(paste('Current Score :',DqScore)))
+                                      ,column(2,align='center',tags$h3('Plausibilty'))
+                                      ,column(2,align='center',tags$h3('Accuracy'))
+                                      ,column(2,align='center',tags$h3('Completeness'))
+                                      ,column(2,align='center',tags$h3('Conformance'))
+                                      ,column(2,align='center',tags$h3('Consistency'))
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(4,align='center',tags$h2('DQ error proportion')
+                                      )
+                                      ,column(8,align = 'left',tags$h2('DQ error distribution')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='right'
+                                             ,bsButton("cv2", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv2", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(8,align='right'
+                                              ,bsButton("cv3", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "cv3", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(4,align='center'
+                                             ,plotlyOutput("cdmVisitErrorPlot")
+                                      )
+                                      ,column(8,align = 'left'
+                                              ,plotlyOutput("cdmVisitQualityDistribution")
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('DQ error message box')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("cv4", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv4", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,DT::dataTableOutput('cdmVisitErrorData'))
+                                    )
+                                    ,tags$hr()
+                                    #Common UI#######
+                                    ,fluidRow(
+                                      column(6,tags$h2('Visit count by year')
+                                      )
+                                      ,column(6,tags$h2('Visit type count by year')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("cv5", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv5", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("cv6", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "cv6", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotlyOutput('cdmVisitCountPlot')
+                                      )
+                                      ,column(6
+                                              ,plotlyOutput('cdmVisitDataPlot')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(6,tags$h2('visit length of one patient')
+                                      )
+                                      ,column(6,tags$h2('Descriptive statistics')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("cv7", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv7", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("cv8", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "cv8", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotOutput('cdmVisitLengthStaticPlot')
+                                      )
+                                      ,column(6
+                                              ,DT::dataTableOutput('cdmVisitLengthPlot')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(6,tags$h2('Daily visit count by visit type')
+                                      )
+                                      ,column(6,tags$h2('Descriptive statistics')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6,align='right'
+                                             ,bsButton("cv9", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv9", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                      ,column(6,align='right'
+                                              ,bsButton("cv10", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                              ,bsPopover(id = "cv10", title = "title_title"
+                                                         ,content = 'text_text_text'
+                                                         ,placement = "left"
+                                                         ,trigger = "focus"
+                                                         ,options = list(container = "body")
+                                              )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(6
+                                             ,plotlyOutput('cdmDaliyVisitTypePlot')
+                                      )
+                                      ,column(6
+                                              ,DT::dataTableOutput('cdmDaliyVisitInfoData')
+                                      )
+                                    )
+                                    ,tags$hr()
+                                    ,fluidRow(
+                                      column(12,tags$h2('Table basic DQ information')
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12,align='right'
+                                             ,bsButton("cv10", label = "", icon = icon("question"), style = "info", size = "extra-small")
+                                             ,bsPopover(id = "cv10", title = "title_title"
+                                                        ,content = 'text_text_text'
+                                                        ,placement = "left"
+                                                        ,trigger = "focus"
+                                                        ,options = list(container = "body")
+                                             )
+                                      )
+                                    )
+                                    ,fluidRow(
+                                      column(12
+                                             ,DT::dataTableOutput('cdmVisitInfoData')
+                                      )
+                                    )
+
+                          )
+
+
+             )
+    )
+    ,tabPanel('Author'
+              ,tabsetPanel(type = "tabs"
+                           ,id = 'AuthorTabs'
+                           ,tabPanel("Contact us ",icon = icon('user-friends',lib = 'font-awesome')
+                                     ,tags$h1('Contact Information',style = 'color:black;')
+
+                                              ,tags$h2('DQUEEN Team',style = 'color:black;')
+                                              ,tags$h3('Department of Biomedical informatics, Ajou University School of Medicine',style = 'color:black;')
+
+                                              ,tags$h4('Address:',style = 'color:black;')
+                                              ,tags$h4('443-721, Hongjae bld 507, Ajou University',style = 'color:black;')
+                                              ,tags$h4('Wonchun-dong, Suwon City, Republic of Korea',style = 'color:black;')
+                                              ,tags$h4('Telephone: +82-31-219-4471',style = 'color:black;')
+                                              ,tags$h4('FAX: +82-31-219-4472',style = 'color:black;')
+                                              ,tags$h4('E-mail: lance.byun@gmail.com',style = 'color:black;')
+                                              ,tags$h4('E-mail: dongsu2005@naver.com',style = 'color:black;')
+
+                                              ,tags$h2('Contribution : ',style = 'color:black;')
+                                              ,tags$h4('Project manager                 : Rae Woong Park',style = 'color:black;')
+                                              ,tags$h4('Project leader                  : Jung hyun Byun',style = 'color:black;')
+                                              ,tags$h4('Back-end developer  -(sql, R)   : Jung hyun Byun',style = 'color:black;')
+                                              ,tags$h4('Front-end developer -(R, shiny) : Dong su Park',style = 'color:black;')
+                                              ,tags$h4('System architecture             : Oh Song heui, Jung hyun Byun',style = 'color:black;')
+
+
+                                              ,tags$h2('Acknowledgement',style = 'color:black;')
+                                              ,tags$h5('This work was supported by a grant of the Korea Health Technology R&D Project through the Korea Health Industry Development Institute (KHIDI),',style = 'color:black;')
+                                              ,tags$h5('funded by the Ministry of Health & Welfare, Republic of Korea [grant number : HI16C0992] and the Bio Industrial Strategic Technology ',style = 'color:black;')
+                                              ,tags$h5('Development Program (20003883) funded By the Ministry of Trade, Industry & Energy (MOTIE, Korea).',style = 'color:black;')
+
+
+
+
+
+
+
+
+
+                           )
+              )
+    )
+
+
+
+    ,tabPanel(
+      loadEChartsLibrary() # for ECharts2Shiny package
+      ,loadEChartsTheme('shine') # for ECharts2Shiny package
+      ,loadEChartsTheme('vintage') # for ECharts2Shiny package
+      ,tags$style('
+                    .custom{
+                    width:50%;
+                    text-align: center;
+                    color: white;
+                    background: green;
+                    margin-bottom : 10px;
+                    }')
+    )
+    #CDM DQ Information-------------------------------------------------------
+
+  )
+)
+
+
+

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568167240536.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1018177479",
+    "id" : "514E6606",
+    "lastKnownWriteTime" : 1568178660,
+    "last_content_update" : 1568178660217,
+    "path" : "D:/git/temp/DqueenDemo/R/Function.R",
+    "project_path" : "R/Function.R",
+    "properties" : {
+        "cursorPosition" : "465,0",
+        "scrollLine" : "445"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

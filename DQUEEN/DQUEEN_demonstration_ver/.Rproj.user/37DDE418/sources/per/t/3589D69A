@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568178742049.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3071950052",
+    "id" : "3589D69A",
+    "lastKnownWriteTime" : 1568180330,
+    "last_content_update" : 1568180330013,
+    "path" : "D:/git/temp/DqueenDemo/R/save_load_RDS.R",
+    "project_path" : "R/save_load_RDS.R",
+    "properties" : {
+        "cursorPosition" : "11,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,229 @@
+구분,Dimension,Concept,Check
+"DQE-c
+(Rule : 12개)",Plausibility,Plausibility,"Comparison of new load to old load (Number of observations, Number of unique patients, Number of tables with rows)"
+,,,Size of tables and rows across the OMOP CDM
+,Fidelity,Fidelity,"Check that primary and foreign keys relate properly; High Priority: Person_ID, Visit_Occurrence_ID"
+,,,Checks that no orphan don't keys exist (a foreign is present in a table but no primary key exists in the reference table)
+,,,"Visualize codes/values entered for DEMOGRAPHICS (Gender, Race, Ethnicity)"
+,Completeness,Completeness,"Number of Tables Received, Number of Observations, Flag Indicator for the table having actual data"
+,,,GENDER completeness (denominator and proportion with valid data)
+,,,AGE/DOB completeness (denominator and proportion with valid data)
+,,,"Key clinical status completeness (denominator and proportion with valid data): Smoking status, alcohol consumption"
+,,,"VITALS completeness (denominator and proportion with valid data): Height, Weight, SBP, DBP"
+,,,Cross reference tables that are present in current dataset to expected tables in standard OMOP CDM
+,,,Looks for NULL and invalid variable values in each column and visualizes percent missingness
+"PEDSnet
+(Rule : 33개)",Plausibility,Temporal,identifies records where the start date is greater than end date
+,,,"identifies specific dates with excessively high number of facts, which are characterized by peaks in the data"
+,,,"identifies sudden shift in distribution of facts, changes occur on a specific date but are sustained over time"
+,,,identifies number of records that occurs after today's date
+,,,identifies dates that occur impossibly far in the past
+,,,"identifies the number of facts that occur before birth, excluding the pre-natal facts"
+,,,identifies the number of facts that occur after death
+,,Atemporal,identifies irregular ratios of facts per patient as compared between sites
+,,,identifies unexpected frequent values based on cross-site comparison
+,,,identifies tables with unexpectedly low number of records
+,,,identifies numerical values out of expected range
+,,,identifies any implausible distribution of values 
+,,,identifies discrepancy between visit types between two tables
+,,,computes percent difference between NULL source values and  'No Information' (44814650) concept id
+,,,identifies the percentage difference between number of specific fact types between two cycles
+,,,identifies the percentage difference between number of records between two cycles
+,,,identifies number of records with missingness outside of expected limits
+,,,"identifies patients, visits, or providers that have an exceptionally high number of facts"
+,Completeness,Completeness,returns percentage of records having null value in a given field
+,,,returns the percentage of records with unmapped concept ids
+,,,identifies concept expected to be present
+,,,identifies percent of visits with no facts associated with them
+,,,identifies percent of specific visit types with missing data
+,Conformance,Relational,returns difference between total number of records and total number of source values 
+,,,identifies records with inconsistent date and datetime values
+,,Value,identifies values that do not belong to a pre-defined set
+,,,identifies concept ids that are not in pre-defined set of concept ids
+,,,identifies values that are placed into an inappropriate field 
+,,,identifies concept ids not in prescribed set of vocabularies
+,,,identifies number of patients that do not satisfy pedsnet's inclusion criteria
+,,,identifies source values and concept ids that are incorrectly mapped
+,,,identifies concepts that are not in the correct classes
+,,,validates format of source value
+"Achilles
+(Rule : 41개)",Plausibility,Plausibility,"multiple checks related to death data where maximum value of a measure should not be positive
+(death distributions where max should not be positive)"
+,,,year of birth is in the future
+,,,"year of birth is prior 1800
+(year of birth < 1800)"
+,,,"age below 0
+(age < 0)"
+,,,"age too high
+(age > 150)"
+,,,"too high days_supply
+(days_supply > 180)"
+,,,"too high number of refils
+(refills > 10)"
+,,,"implausible quantity for drug
+(quantity > 600)"
+,,,"infant diagnosis at senior age of over 50yo
+(This rule is example of a terminology depended data quality tool)"
+,,,"ratio of providers to total patients
+(This rules fires if data indicate a high number of patients and only a few providers exist.)"
+,,,"Percentage of patients with no visits exceeds threshold
+(checks if the percentage of patients with no visits exceeds threshold)"
+,,Temporal,"age too high2
+(age > 125; same as rule 21 but as warning flavor; same threshold is used by Sentinel DQA)"
+,Conformance,Conformance,invalid concept_id
+,,,invalid type concept_id
+,,,concept from the wrong vocabulary
+,,,concept from the wrong vocabulary; race
+,,,concept from the wrong vocabulary; ethnicity
+,,,concept from the wrong vocabulary; place of service
+,,,"incorrect terminology
+(specialty - 48 specialty)"
+,,,"Dx is not a SNOMED code 
+(concept from the wrong vocabulary; Condition Occurrence, Condition Era (SNOMED))"
+,,,"Drug is not RxNorm concept 
+(concept from the wrong vocabulary; Drug Exposure, Drug Era (RxNorm))"
+,,,"Procedure is not CPT, ICD9Proc or HCPCS"
+,,,"incorrect terminology
+(revenue code - 43 revenue code)"
+,Completeness,Completeness,more than 1 percent of unmapped rows (concept_0 rows)
+,,,percentage of non-numerical measurement records exceeds general population threshold
+,,,[GeneralPopulationOnly] Not all deciles represented at first observation
+,,,Count of unmapped source values in a domain exceeds threshold
+,,,"Notes data density
+(This rule is measuring data density on visit level (in addition to patient and dataset level)"
+,,,Provider Specialty data density
+,,,Too high Born to Deceased Ratio in some years
+,,,Death event outside observation period
+,,,"No weight data in MEASUREMENT table
+(implementation of similar Sentinel rule for certain vital signs)"
+,,,Percentage of outpatient visits is too low
+,,,99+ percent of persons have exactly one observation period
+,,,"Percentage of patients with at least 1 Measurement, 1 Dx and 1 Rx is below threshold"
+,Fidelity,Fidelity,"monthly trend
+(monthly change > 100%)"
+,,,"monthly trend
+(monthly change > 100% at concept level)"
+,,,Count of measurement_ids with more than 5 distinct units exceeds threshold
+,Complex,Complex,multiple checks for greater than zero
+,,,multiple checks where minimum value of a measure should not be negative
+,,DQ,data with unmapped concepts
+"Ajou
+(Rule : 18개)",Plausibility,원본데이터에 대한 신뢰성,변환에 사용된 원본 데이터 수
+,,,변환기간 이탈
+,,,원본데이터가 Null 값인 경우
+,,,필요 테이블과 컬럼 존재 유무
+,,중복여부,person_id 중복 여부 확인
+,,,테이블_ID 중복 여부 확인
+,,,동일 데이터의 중복 여부 확인
+,,논리적 오류,age  관련 논리적 오류
+,,,Birth date 관련
+,,데이터 누락,변환된 데이터 수
+,,매핑오류(오류/예정/불가),Unmapped concept
+,Conformance,입력/변환 기준 적합성,OMOP CDM에서 지정한 Required field를 변환 하였는지 여부 확인
+,,,기본키 누락
+,,,테이블 조건 부적합
+,,테이블 간의 관계/규칙,연계키 누락
+,,테이블 간 동일 데이터에 관한 분포,연관된 두 테이블간 사이에 같은 데이터가 다른 분포를 보이는지 여부 확인
+,Consistency,사용 용어체계의 변화,새로운 ID 추가 등으로 인한 사용용어 체계의 변화 확인
+,Timeliness,Input data,ETL 수행시간(테이블별)
+"In-house
+(Rules : 100)",Plausibility,Uniquness,원본 테이블에 대해서 Row count를 수행
+,,,각 테이블의 주키는 중복 될 수 없음(Primary key )
+,,,"환자별 식별 대체키는 중복 될수 없음 ( Primary key, Alternate key)"
+,,,데이터는 중복 될 수 없음 
+,,Temporal,지나치게 많은 데이터를 가지고 있는 특정날 혹은 달의 데이터 
+,,,지나치게 적은 데이터를 가지고 있는 날의 데이터 
+,,,시작날짜는 종료날짜보다 미래일 수 없음  
+,,,사망 이후 데이터는 존재 할 수 없음 
+,,,출생년도는 미래 일 수 없음 
+,,,미래 데이터는 존재 할 수 없음 
+,,,처방날짜는 진단날짜 이후여야 함 
+,,,진단날짜는 방문일시와 같거나 뒤여야함 
+,,,입원기간 중 발생한 기록은 기간안에 있어야함 
+,,,운영기간 이전의 데이터는 존재 할 수 없음  
+,,,관찰기간 이외의 데이터가 존재하는가?
+,,,데이터의 비율이 다른해와 다름 
+,,Atemporal,Specimen의 Quantity가 너무 높음 
+,,,Warn: Alter for measrueent value is outlier 
+,,,점수 혹은 척도 값은 +- 3SD 이내여야 함 
+,,,태어나기 이전의 데이터는 존재 할 수 없음 
+,,,방문 타입 별 건수에 비해 데이터의 비율이 비례하지 않음
+,,,연계 되는 기록의 간격이 1년이상인 경우 
+,,,성별에 따라 발생할 수 없는 진단데이터 
+,,,성별에 따라 측정할 수 없는 검사결과
+,,,성별에 따라 처방할 수 없는 데이터 
+,,,검사결과 타입이 숫자인 경우 Neg일 수 없음 
+,,,약품의 최대 처방일수는 214일 이상 될 수 없음 
+,,,일수는 0이하 일 수 없음 
+,,,비 진료과에서는 환자를 진단 할 수 없음 
+,,,비 진료과에서는 처방을 내릴 수 없음 
+,,,의사외 직업군에서는 처방을 내릴 수 없음 
+,,,의사외 직업군에서 진단을 내릴 수 없음 
+,,,간호사의 처방 비율이 의사보다 높을 수 없음
+,,,방문없이 처방등 기록이 발생할 수 없음 
+,,,진단정보 없이 기록이 발생 할 수 없음 
+,,,"DC, PRN처방은 원처방보다 기록 발생률이 낮아야 함 "
+,,,나이가 음수 값임 
+,,,검사결과 중 기계적 오류 값은 없어야 함  
+,,,청구 금액은 -가 될 수 없음 
+,,,응급->입원으로 합쳐진 수는 대상 응급의 수와 같아야 함
+,,,이전 방문 기록이 일치하는가?
+,,,통원 수술의 경우 재원일수가 1일 이상 될 수 없음 
+,,,첫 방문일 경우 Preceeding visit은 존재 할 수 없음 
+,,,퇴원약이 아닌 경우 Daysupply가 2일 이상 될 수 없음 
+,,,입원환자의 경우 확정진단이 1개 이상 있어야 함 
+,,,환자수에 비해 프로바이더의 비율이 적음 
+,,,재원일수는 180일 이상 될 수 없음 
+,,,Quantity is not negative 
+,,,태어나기 이전 사망 할 수 없음 
+,,,약물의 경우 횟수가 10회 이상일 수 없음 
+,,,입원환자는 입원기록지가 존재해야함 
+,,,입원환자는 Progress기록이 존재해야함 
+,,,입원환자는 퇴원기록지가 있어야함
+,,,불출량-반납량은 실수량과 같아야함 
+,,,CNT > 0 
+,,,응급->입원 인경우 ADMTIME은 ERTIME과 같거나 뒤여야함 
+,,,입원 후 24시간 내 admission note가 있어야함 
+,,,퇴원 시 Discharge note가 있어야함 
+,,,Day는 0이 될 수 없음 day > 0 
+,,,ZIPCD는 5자리 이상 될 수 없음 
+,,,기록지의 데이터의 밀도는 평균 이상이어야함 
+,Completeness,N/A,검사별 수치 값들의 완정성 
+,,,데이터 내 missing 값이 존재하는가
+,,,"환자번호, 진단날짜, 처방날짜는 null이 있을 수 없음 "
+,,,환자의 방문 유형은  null 일 수 없음 
+,,,날짜 데이터는 null이 될 수 없음 
+,,,처방코드 없이 처방이 발생할 수 없음 
+,,,Provider_id 없이 데이터가 생성 될 수 없음
+,,,검사결과값이 null 일수 없음 
+,,,직접사인은 null 일 수 없음 
+,,,제외되는 환자 및 건수가 일치하는가 ?
+,,Conditional,생성된 Meta 테이블의 로우수는 최소기준을 만족해야 함 
+,,,적재된 데이터의 수는 Threshhold value 이상이어야 함 
+,,,각 테이블 별 레코드 수는 환자의 특정 Thresh hold value값 이상이 되어야 함  
+,Conformance,Value,코드는 유효해야함 
+,,,개념이 불분명한 코드
+,,,잘못된 도메인에 적재된 코드 
+,,,검사 항목 별 결과 값의 데이터 형식은 동일 해야 함
+,,,unit에서 사용되지 않는 결과값 형식
+,,,Compare to original data characteristics with migration data
+,,,각 테이블은 PK와 FK가 포함되어야 함 
+,,,테이블 내 컬럼명은 사전 정의와 일치해야 함 
+,,,데이터 형식은 사전 정의와 일치해야함 
+,,,로컬 코드는 동일한 형식이어야 함 
+,,,진단코드는 KCD-7 형식을 벗어날 수 없음 
+,,,사용되는 유닛은 동일해야 함 
+,,Relational,테이블 생성 여부 
+,,,각 테이블은 PK와 FK가 포함되어야 함 (threshhold 있음)
+,,,테이블간 방문 유형은 일치해야함 
+,,,Activation 환자의 수는 각 테이블 별로 동일해야 함 
+,,,Specimen 테이블은 각 행위처치 테이블과 연결이 되어야 함 
+,Accuracy,Accuracy,Compare to origin data row count with Migrated reulst row count
+,,,Load data와 derived data의 사이즈는 최소 용량을 만족해야함  
+,,,"환자, 직원의생년월일은 주민등록번호와 일치해야 함 "
+,,,"Race는 Asian, Black, KR, Wite,Alien으로 구분"
+,,,"Position은 DR,RN,Other_suppier로 구분 "
+,,,"Cf_type은 사망진단서, 사산증명서, 시체부검서 세개로 구분"
+,,,"입원경로는 op, er, dr, nb, or, rd로 구분 됨 "
+,,,"퇴원경로는 Continume, Transfer, Return, Death, Discharge로 구분"
+,,,"환자의 방문유형은 I, D, E, O, G, S로 구분"

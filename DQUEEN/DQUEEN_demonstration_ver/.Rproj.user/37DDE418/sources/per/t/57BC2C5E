@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568173684110.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1570411895",
+    "id" : "57BC2C5E",
+    "lastKnownWriteTime" : 1568180146,
+    "last_content_update" : 1568180146972,
+    "path" : "D:/git/temp/DqueenDemo/inst/shinyApp/server.R",
+    "project_path" : "inst/shinyApp/server.R",
+    "properties" : {
+        "cursorPosition" : "0,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

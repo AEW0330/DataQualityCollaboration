@@ -1,0 +1,1 @@
+SELECT * FROM @resultDB.schema_capacity WHERE Stage_gb = '@type';
