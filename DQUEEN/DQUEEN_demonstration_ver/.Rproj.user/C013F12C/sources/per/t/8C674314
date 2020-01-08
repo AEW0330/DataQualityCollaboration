@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1568583255712.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3005737334",
+    "id" : "8C674314",
+    "lastKnownWriteTime" : 1568583262,
+    "last_content_update" : 1568583262681,
+    "path" : "~/git/DqueenDemo/R/runApp.R",
+    "project_path" : "R/runApp.R",
+    "properties" : {
+        "cursorPosition" : "0,28",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

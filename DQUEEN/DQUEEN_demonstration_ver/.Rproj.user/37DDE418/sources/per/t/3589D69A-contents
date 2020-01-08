@@ -1,0 +1,11 @@
+#Save RDS (if you have your DB Result)
+resultPath <- file.path(getwd(),'data')
+for(i in 1:length(ls())){
+  saveRDS(get(ls()[i]),paste0(resultPath,'/',ls()[i],'.RDS'))
+}
+
+#Load RDS (if you can not DB Connect)
+myValue <- lapply(file.path(getwd(),'/data',list.files(file.path(getwd(),'/data'))), readRDS)
+for(i in 1:length(list.files(file.path(getwd(),'/data')))){
+  assign(gsub('.RDS','',list.files(file.path(getwd(),'/data')))[i],myValue[[i]])
+}

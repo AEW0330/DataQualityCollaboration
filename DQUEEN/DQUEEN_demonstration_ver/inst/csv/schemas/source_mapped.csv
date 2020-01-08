@@ -1,0 +1,46 @@
+meta_tbnm,source_schema,source_tbnm,qualification,where 
+Dev_siteinfo,Byun_origin_2M,Dept_master,base,
+Dev_person,Byun_origin_2M,acpatbat,base,
+Dev_person,Byun_origin_2M,Race_info_in_EMR,left join ,
+Dev_person,Byun_origin_2M,DW_MNBAPAT,left join ,
+Dev_death,Byun_origin_2M,Death_certification,base,
+Dev_death,Byun_origin_2M,Dev_person,inner join,
+Dev_provider,Byun_origin_2M,DW_CSUSERMT,base,
+Dev_condition,Byun_origin_2M,MMPDIAGT,base,
+Dev_condition,Byun_origin_2M,SMDDIAGT,union,
+Dev_cost,Byun_origin_2M,AOOPCALT,base,
+Dev_cost,Byun_origin_2M,APIPCALT,union,
+Dev_device,Byun_origin_2M,MMTRTORT_Device,,ORDCLSTYP ='D2'
+Dev_drug,Byun_origin_2M,MMMEDORT,base,"where patfg in ('I','E','D')"
+Dev_drug,Byun_origin_2M,MNWADACT,inner join,
+Dev_drug,Byun_origin_2M,MMMEDORT,union,"where patfg not in ('I','E','D')"
+Dev_measurement,Byun_origin_2M,SLTRSTMT,base,
+Dev_measurement,Byun_origin_2M,MMEXMORT,left join ,
+Dev_measurement,Byun_origin_2M,MNVITALT,union,
+Dev_measurement,Byun_origin_2M,pre_meta_measurement_iv,union,
+Dev_note,Byun_origin_2M,admission_note_emr1,base,
+Dev_note,Byun_origin_2M,admission_note_emr2,union,
+Dev_note,Byun_origin_2M,admission_note_emr3,union,
+Dev_note,Byun_origin_2M,progress_note_emr1,union,
+Dev_note,Byun_origin_2M,progress_note_emr2,union,
+Dev_note,Byun_origin_2M,progress_note_emr3,union,
+Dev_note,Byun_origin_2M,discharge_note,union,
+Dev_observation,Byun_origin_2M,DW_MRR_CONT_CLNINFO,base,
+Dev_observation,Byun_origin_2M,DW_MRR_FRM_CLNINFO,union,
+Dev_payer,Byun_origin_2M,AOOPCALT,base,instyp not in (*)
+Dev_payer,Byun_origin_2M,APIPCALT,union,instyp not in (*)
+Dev_procedrue,Byun_origin_2M,MMTRTORT,base,"ORDCLSTYP in ('D1','D2','D3')"
+Dev_procedrue,Byun_origin_2M,MMEXMORT,union,"ORDCLSTYP in ('C2','C3')"
+Dev_procedrue,Byun_origin_2M,MMREHORT,union,
+Dev_procedrue,Byun_origin_2M,MNBLOODT,union,
+Dev_specimen,Byun_origin_2M,spcollmt,base,
+Dev_specimen,Byun_origin_2M,spcolldt,join ,
+Dev_specimen,Byun_origin_2M,spacptmt,base,
+Dev_specimen,Byun_origin_2M,spacptdt,join ,
+Dev_specimen,Byun_origin_2M,spdiagt,left join ,
+Dev_specimen,Byun_origin_2M,slspcmct,left join ,
+Dev_specimen,Byun_origin_2M,slordrct,left join ,
+Dev_visitdetail,Byun_origin_2M,APIPDLST,base,
+Dev_visitdetail,Byun_origin_2M,SMIDSCHT,left join ,
+Dev_visitdetail,Byun_origin_2M,AOOPDLST,union,
+Dev_visitdetail,Byun_origin_2M,MPRECEIT,union,

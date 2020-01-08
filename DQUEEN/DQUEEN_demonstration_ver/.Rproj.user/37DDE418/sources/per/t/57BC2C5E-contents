@@ -1,0 +1,595 @@
+
+
+server <- (function(input, output) {
+
+  output$selectBar <- renderUI({
+    selectInput("selectBar", NULL,
+                choices = c(
+                  "Summary" = "summary"
+                  ,"Domain:Meta (source data)" = "DomainMeta"
+                  ,"Domain:CDM  (OMOP-CDM)"  = "DomainCDM"
+                )
+    )
+  })
+
+
+  #Page 1-1
+  output$Main_scoreDonutPlot <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(totalScore),scoreColorFunction(totalScore)))
+  })
+
+  renderRadarChart("metaRader", data = metaErrorValidationData, shape = "circle", line.width = 3,
+                   theme = "dark-digerati",font.size.legend = 14)
+  renderRadarChart("cdmRader", data = cdmErrorValidationData, shape = "circle", line.width = 3,
+                   theme = "dark-digerati",font.size.legend = 14)
+
+  renderPieChart(div_id = "errorPropotionAll",
+                 data = errorNum,
+                 radius = "90%",center_x = "50%", center_y = "50%",font.size.legend = 14)
+
+  renderBarChart(div_id = "personCount", grid_left = '1%',
+                 data = personCount)
+
+  renderLineChart(div_id = "operationPeriod", theme = "shine",
+                  data = observationPeriod,stack_plot = F)
+
+  #Page3-1
+  output$cdmHitmap <- renderHighchart({
+
+    hctreemap(treemap::treemap(cdmTableSize,
+                               index=c("TABLE_NAME"),
+                               vSize="rows",
+                               vColor="table_size",
+                               type="value",
+                               title = "",
+                               title.legend = "Table Availability",
+                               border.col = "white",
+                               position.legend = "bottom"),
+              allowDrillToNode = TRUE, allowPointSelect = TRUE) %>%
+      hc_tooltip(pointFormat = "<b>{point.name}</b>
+                   <br>Rows: {point.value}<br>
+                   Size: {point.valuecolor} KB")
+  })
+
+  output$cdmTreeMapInfo <- DT::renderDataTable({
+    table <- cdmTableSize
+    table
+  })
+
+  renderGauge(div_id = "cdmRate", gauge_name = "Data Quality rate",
+              rate = DqScore)
+
+  renderBarChart(div_id = "cdmErrorBarPlot", theme = "vintage",
+                 direction = "vertical", grid_left = "10%",
+                 data = dat_2)
+
+  renderBarChart(div_id = "cdmErrorBarPlot2", theme = "vintage",
+                 direction = "vertical", grid_left = "10%",
+                 data = dat_2)
+
+
+  #Page Meta, CDM Common denominator
+
+  output$hihi <- renderText({
+    print(input$metaTabs)
+  })
+
+  output$metaMainScoreDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaScore),scoreColorFunction(metaScore)))
+  })
+
+  output$metaPersonScoreDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaScore),scoreColorFunction(metaScore)))
+  })
+
+  output$metaVisitScoreDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaScore),scoreColorFunction(metaScore)))
+  })
+
+  output$cdmMainScoreDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmMainScore),scoreColorFunction(cdmMainScore)))
+  })
+
+  output$cdmPersonScoreDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmPersonScore),scoreColorFunction(cdmPersonScore)))
+  })
+
+  output$cdmVisitScoreDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmVisitScore),scoreColorFunction(cdmVisitScore)))
+  })
+
+
+
+  output$metaMainPlausibiltyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaMainValidation[1]),scoreColorFunction(metaMainValidation[1])))
+  })
+
+  output$metaMainAccuracyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaMainValidation[2]),scoreColorFunction(metaMainValidation[2])))
+  })
+
+  output$metaMainCompletenessDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaMainValidation[3]),scoreColorFunction(metaMainValidation[3])))
+  })
+
+  output$metaMainConformanceDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaMainValidation[4]),scoreColorFunction(metaMainValidation[4])))
+  })
+
+  output$metaMainConsistencyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaMainValidation[5]),scoreColorFunction(metaMainValidation[5])))
+  })
+
+  output$metaPersonPlausibiltyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaPersonValidation[1]),scoreColorFunction(metaPersonValidation[1])))
+  })
+
+  output$metaPersonAccuracyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaPersonValidation[2]),scoreColorFunction(metaPersonValidation[2])))
+  })
+
+  output$metaPersonCompletenessDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaPersonValidation[3]),scoreColorFunction(metaPersonValidation[3])))
+  })
+
+  output$metaPersonConformanceDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaPersonValidation[4]),scoreColorFunction(metaPersonValidation[4])))
+  })
+
+  output$metaPersonConsistencyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaPersonValidation[5]),scoreColorFunction(metaPersonValidation[5])))
+  })
+
+  output$metaVisitPlausibiltyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaVisitValidation[1]),scoreColorFunction(metaVisitValidation[1])))
+  })
+
+  output$metaVisitAccuracyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaVisitValidation[2]),scoreColorFunction(metaVisitValidation[2])))
+  })
+
+  output$metaVisitCompletenessDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaVisitValidation[3]),scoreColorFunction(metaVisitValidation[3])))
+  })
+
+  output$metaVisitConformanceDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaVisitValidation[4]),scoreColorFunction(metaVisitValidation[4])))
+  })
+
+  output$metaVisitConsistencyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(metaVisitValidation[5]),scoreColorFunction(metaVisitValidation[5])))
+  })
+
+
+  output$cdmMainPlausibiltyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmMainValidation[1]),scoreColorFunction(cdmMainValidation[1])))
+  })
+
+  output$cdmMainAccuracyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmMainValidation[2]),scoreColorFunction(cdmMainValidation[2])))
+  })
+
+  output$cdmMainCompletenessDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmMainValidation[3]),scoreColorFunction(cdmMainValidation[3])))
+  })
+
+  output$cdmMainConformanceDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmMainValidation[4]),scoreColorFunction(cdmMainValidation[4])))
+  })
+
+  output$cdmMainConsistencyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmMainValidation[5]),scoreColorFunction(cdmMainValidation[5])))
+  })
+
+  output$cdmPersonPlausibiltyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmPersonValidation[1]),scoreColorFunction(cdmPersonValidation[1])))
+  })
+
+  output$cdmPersonAccuracyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmPersonValidation[2]),scoreColorFunction(cdmPersonValidation[2])))
+  })
+
+  output$cdmPersonCompletenessDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmPersonValidation[3]),scoreColorFunction(cdmPersonValidation[3])))
+  })
+
+  output$cdmPersonConformanceDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmPersonValidation[4]),scoreColorFunction(cdmPersonValidation[4])))
+  })
+
+  output$cdmPersonConsistencyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmPersonValidation[5]),scoreColorFunction(cdmPersonValidation[5])))
+  })
+
+  output$cdmVisitPlausibiltyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmVisitValidation[1]),scoreColorFunction(cdmVisitValidation[1])))
+  })
+
+  output$cdmVisitAccuracyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmVisitValidation[2]),scoreColorFunction(cdmVisitValidation[2])))
+  })
+
+  output$cdmVisitCompletenessDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmVisitValidation[3]),scoreColorFunction(cdmVisitValidation[3])))
+  })
+
+  output$cdmVisitConformanceDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmVisitValidation[4]),scoreColorFunction(cdmVisitValidation[4])))
+  })
+
+  output$cdmVisitConsistencyDonut <- renderggiraph({
+    ggiraph(ggobj = drawDonutPlot(donutPlot(cdmVisitValidation[5]),scoreColorFunction(cdmVisitValidation[5])))
+  })
+
+
+
+  # Page 4-1
+
+  output$metaHitmap <- renderHighchart({
+
+    hctreemap(treemap::treemap(metaTableSize,
+                               index=c("TABLE_NAME"),
+                               vSize="rows",
+                               vColor="table_size",
+                               type="value",
+                               title = "",
+                               title.legend = "Table Availability",
+                               border.col = "white",
+                               position.legend = "bottom"),
+              allowDrillToNode = TRUE, allowPointSelect = TRUE) %>%
+      hc_tooltip(pointFormat = "<b>{point.name}</b>
+                   <br>Rows: {point.value}<br>
+                   Size: {point.valuecolor} KB")
+  })
+
+
+  output$metaHitmapTable <- DT::renderDataTable(
+    DT::datatable(metaTableSize,filter = 'top', options = list(
+      pageLength = 10, autoWidth = F),selection = 'single'
+    )
+  )
+
+  output$cdmHitmapTable <- DT::renderDataTable(
+    DT::datatable(cdmTableSize,filter = 'top', options = list(
+      pageLength = 10, autoWidth = F),selection = 'single'
+    )
+  )
+
+  output$metaHitmapTableOutput <- renderPlotly({
+
+    metaTableSize$TABLE_NAME <- tolower(metaTableSize$TABLE_NAME)
+    visitPerson$TABLE_NAME <- tolower(visitPerson$TABLE_NAME)
+
+
+    selectedrowindex <- input$metaHitmapTable_rows_selected
+    selectedrowindex <- as.numeric(selectedrowindex)
+    tableName <- metaTableSize[selectedrowindex,'TABLE_NAME']
+    visitTable <- visitPerson[visitPerson$TABLE_NAME == tableName,]
+    visitPlot <- visitTable %>% plot_ly(x = ~count_year) %>% add_lines(y = ~visit_count,name='Visit_count') %>% add_lines(y = ~count_val,name='count_val')
+
+  })
+
+  output$metaHitmapTableOutput2 <- renderPlotly({
+
+    metaTableSize$TABLE_NAME <- tolower(metaTableSize$TABLE_NAME)
+    visitType$TABLE_NAME <- tolower(visitType$TABLE_NAME)
+
+
+    selectedrowindex <- input$metaHitmapTable_rows_selected
+    selectedrowindex <- as.numeric(selectedrowindex)
+    tableName <- metaTableSize[selectedrowindex,'TABLE_NAME']
+    visitTable <- visitType[visitType$TABLE_NAME == tableName,]
+
+    visitTable %>% group_by(visit_type) %>%
+      plot_ly(x= ~count_year,y= ~count_val, group=~visit_type,type='scatter',color=~visit_type,mode='lines')
+
+  })
+
+  output$cdmHitmapTableOutput <- renderPlotly({
+
+    cdmTableSize$TABLE_NAME <- tolower(cdmTableSize$TABLE_NAME)
+    cdmVisitPerson$TABLE_NAME <- tolower(cdmVisitPerson$TABLE_NAME)
+
+
+    selectedrowindex <- input$cdmHitmapTable_rows_selected
+    selectedrowindex <- as.numeric(selectedrowindex)
+    tableName <- cdmTableSize[selectedrowindex,'TABLE_NAME']
+    visitTable <- cdmVisitPerson[cdmVisitPerson$TABLE_NAME == tableName,]
+    visitPlot <- visitTable %>% plot_ly(x = ~count_year) %>% add_lines(y = ~visit_count,name='Visit_count') %>% add_lines(y = ~count_val,name='count_val')
+
+  })
+
+  output$cdmHitmapTableOutput2 <- renderPlotly({
+
+    cdmTableSize$TABLE_NAME <- tolower(cdmTableSize$TABLE_NAME)
+    cdmVisitType$TABLE_NAME <- tolower(cdmVisitType$TABLE_NAME)
+
+
+    selectedrowindex <- input$cdmHitmapTable_rows_selected
+    selectedrowindex <- as.numeric(selectedrowindex)
+    tableName <- cdmTableSize[selectedrowindex,'TABLE_NAME']
+    visitTable <- cdmVisitType[cdmVisitType$TABLE_NAME == tableName,]
+
+    visitTable %>% group_by(visit_type) %>%
+      plot_ly(x= ~count_year,y= ~count_val, group=~visit_type,type='scatter',color=~visit_type,mode='lines')
+
+  })
+
+
+  # Person Page
+  renderBarChart(div_id = "metaPatientClassificationPlot", grid_left = '1%',stack_plot = T,
+                 data = PatientClassification)
+
+  renderBarChart(div_id = "cdmPatientClassificationPlot", grid_left = '1%',stack_plot = T,
+                 data = cdmPatientClassification)
+
+  renderBarChart(div_id = "metaPersonBirthPlot", grid_left = '1%',direction = 'vertical',
+                 data = personBirth)
+
+  renderBarChart(div_id = "cdmPersonBirthPlot", grid_left = '1%',direction = 'vertical',
+                 data = cdmPersonBirth)
+
+  output$metaPersonInfoData <- DT::renderDataTable({
+    table <- metaPersonInfo
+    table
+  })
+
+  output$cdmPersonInfoData <- DT::renderDataTable({
+    table <- cdmPersonInfo
+    table
+  })
+
+
+  output$metaVisitCountPlot <- renderPlotly({
+    plot_ly(visitValidation, x = ~visit_year, y = ~count_val, type='bar',name='Visit Count') %>%
+      add_segments(x=min(visitValidation$visit_year)-1,xend=max(visitValidation$visit_year)+1,y=unique(visitValidation$p_10),yend=unique(visitValidation$p_10),name='percentile 10')
+  })
+
+  output$cdmVisitCountPlot <- renderPlotly({
+    plot_ly(cdmvisitValidation2, x = ~visit_year, y = ~count_val, type='bar',name='Visit Count') %>%
+      add_segments(x=min(cdmvisitValidation2$visit_year)-1,xend=max(cdmvisitValidation2$visit_year)+1,y=unique(cdmvisitValidation2$p_10),yend=unique(cdmvisitValidation2$p_10),name='percentile 10')
+  })
+
+  output$metaVisitDataPlot <- renderPlotly({
+    visitData %>% group_by(patfg) %>%
+      plot_ly(x= ~visit_year,y= ~count_val, group=~patfg,type='scatter',color=~patfg,mode='lines') %>%
+      add_segments(x=min(visitData$visit_year),xend=max(visitData$visit_year),y=visitData$P_25,yend=visitData$P_25,name='p_25')
+  })
+
+  output$cdmVisitDataPlot <- renderPlotly({
+    cdmVisitData %>% group_by(patfg) %>%
+      plot_ly(x= ~visit_year,y= ~count_val, group=~patfg,type='scatter',color=~patfg,mode='lines') %>%
+      add_segments(x=min(cdmVisitData$visit_year),xend=max(cdmVisitData$visit_year),y=cdmVisitData$P_25,yend=cdmVisitData$P_25,name='p_25')
+  })
+
+
+  output$metaTreeMapInfo <- DT::renderDataTable({
+    table <- metaTableSize
+    table
+  })
+
+  output$metaMainErrorPlot <- renderPlotly({
+    plot_ly(metaPiePlot, labels = ~category, values = ~count_val, type = "pie",source = 'metaMainError') %>%
+      layout(showlegend = TRUE)
+  })
+
+  output$metaPersonErrorPlot <- renderPlotly({
+    plot_ly(metaPersonPiePlot, labels = ~category, values = ~count_val, type = "pie",source = 'metaPersonError') %>%
+      layout(showlegend = TRUE)
+  })
+
+  output$metaVisitErrorPlot <- renderPlotly({
+    plot_ly(metaVisitPiePlot, labels = ~category, values = ~count_val, type = "pie",source = 'metaVisitError') %>%
+      layout(showlegend = TRUE)
+  })
+
+  output$cdmMainErrorPlot <- renderPlotly({
+    plot_ly(cdmPiePlot, labels = ~category, values = ~count_val, type = "pie",source = 'cdmMainError') %>%
+      layout(showlegend = TRUE)
+  })
+
+  output$cdmPersonErrorPlot <- renderPlotly({
+    plot_ly(cdmPersonPiePlot, labels = ~category, values = ~count_val, type = "pie",source = 'cdmPersonError') %>%
+      layout(showlegend = TRUE)
+  })
+
+  output$cdmVisitErrorPlot <- renderPlotly({
+    plot_ly(cdmVisitPiePlot, labels = ~category, values = ~count_val, type = "pie",source = 'cdmVisitError') %>%
+      layout(showlegend = TRUE)
+  })
+
+  output$metaMainQualityDistribution <- renderPlotly({
+    d <- event_data("plotly_click",source = 'metaMainError')
+    myPoint <- d$pointNumber+1
+    point <- tolower(metaPiePlot$category[myPoint])
+    metaMainHist$category <- tolower(metaMainHist$category)
+    zz <- metaMainHist[metaMainHist$category == point,]
+    plot_ly(zz, x= ~stratum1,y=~count_val,type='bar')
+
+  })
+
+  output$metaPersonQualityDistribution <- renderPlotly({
+    d <- event_data("plotly_click",source = 'metaPersonError')
+    myPoint <- d$pointNumber+1
+    point <- tolower(metaPersonPiePlot$category[myPoint])
+    metaPersonHist$category <- tolower(metaPersonHist$category)
+    zz <- metaPersonHist[metaPersonHist$category == point,]
+    plot_ly(zz, x= ~stratum1,y=~count_val,type='bar')
+
+  })
+
+  output$metaVisitQualityDistribution <- renderPlotly({
+    d <- event_data("plotly_click",source = 'metaVisitError')
+    myPoint <- d$pointNumber+1
+    point <- tolower(metaVisitPiePlot$category[myPoint])
+    metaVisitHist$category <- tolower(metaVisitHist$category)
+    zz <- metaVisitHist[metaVisitHist$category == point,]
+    plot_ly(zz, x= ~stratum1,y=~count_val,type='bar')
+
+  })
+
+  output$cdmMainQualityDistribution <- renderPlotly({
+    d <- event_data("plotly_click",source = 'cdmMainError')
+    myPoint <- d$pointNumber+1
+    point <- tolower(cdmPiePlot$category[myPoint])
+    cdmMainHist$category <- tolower(cdmMainHist$category)
+    zz <- cdmMainHist[cdmMainHist$category == point,]
+    plot_ly(zz, x= ~stratum1,y=~count_val,type='bar')
+
+  })
+
+  output$cdmPersonQualityDistribution <- renderPlotly({
+    d <- event_data("plotly_click",source = 'cdmPersonError')
+    myPoint <- d$pointNumber+1
+    point <- tolower(cdmPersonPiePlot$category[myPoint])
+    cdmPersonHist$category <- tolower(cdmPersonHist$category)
+    zz <- cdmPersonHist[cdmPersonHist$category == point,]
+    plot_ly(zz, x= ~stratum1,y=~count_val,type='bar')
+
+  })
+
+  output$cdmVisitQualityDistribution <- renderPlotly({
+    d <- event_data("plotly_click",source = 'cdmVisitError')
+    myPoint <- d$pointNumber+1
+    point <- tolower(cdmVisitPiePlot$category[myPoint])
+    cdmVisitHist$category <- tolower(cdmVisitHist$category)
+    zz <- cdmVisitHist[cdmVisitHist$category == point,]
+    plot_ly(zz, x= ~stratum1,y=~count_val,type='bar')
+
+  })
+
+  output$metaMainErrorData <- DT::renderDataTable({
+    table <- metaMessageBox
+    table
+  })
+
+  output$metaPersonErrorData <- DT::renderDataTable({
+    table <- metaPersonMessageBox
+    table
+  })
+
+  output$metaVisitErrorData <- DT::renderDataTable({
+    table <- metaVisitMessageBox
+    table
+  })
+
+  output$cdmMainErrorData <- DT::renderDataTable({
+    table <- cdmMessageBox
+    table
+  })
+
+  output$cdmPersonErrorData <- DT::renderDataTable({
+    table <- cdmPersonMessageBox
+    table
+  })
+
+  output$cdmVisitErrorData <- DT::renderDataTable({
+    table <- cdmVisitMessageBox
+    table
+  })
+
+  output$metaVisitLengthStaticPlot <- renderPlot({
+    ggplot(visitLengthStatic,aes(factor(patfg),diff_date)) + geom_boxplot(aes(fill=(patfg))) + geom_jitter()
+  })
+
+  output$cdmVisitLengthStaticPlot <- renderPlot({
+    ggplot(cdmVisitLengthStatic,aes(factor(patfg),diff_date)) + geom_boxplot(aes(fill=(patfg))) + geom_jitter()
+  })
+
+  output$metaVisitLengthPlot <- DT::renderDataTable({
+    table <- visitLength
+    table
+  })
+
+  output$cdmVisitLengthPlot <- DT::renderDataTable({
+    table <- cdmVisitLength
+    table
+  })
+
+  output$metaDaliyVisitTypePlot <- renderPlotly({
+    daliyVisitType %>% group_by(patfg) %>%
+      plot_ly(x = ~daily_visit_cnt,y=~count_val,type='scatter',color=~patfg,mode='lines')
+  })
+
+  output$cdmDaliyVisitTypePlot <- renderPlotly({
+    cdmDaliyVisitType %>% group_by(patfg) %>%
+      plot_ly(x = ~daily_visit_cnt,y=~count_val,type='scatter',color=~patfg,mode='lines')
+  })
+
+  output$metaDaliyVisitInfoData <- renderDataTable({
+    table <- daliyVisitInfo
+    table
+  })
+
+  output$cdmDaliyVisitInfoData <- renderDataTable({
+    table <- cdmDaliyVisitInfo
+    table
+  })
+
+  output$metaVisitInfoData <- DT::renderDataTable({
+    table <- metaVisitInfo
+    table
+  })
+
+  output$cdmVisitInfoData <- DT::renderDataTable({
+    table <- cdmVisitInfo
+    table
+  })
+
+  #treemap##################################################
+
+
+  output$k_2 <- renderPlot({
+    treemap::treemap(cdmTableSize,
+                     index=c("TABLE_NAME"),
+                     vSize="index",
+                     vColor="status",
+                     type="categorical",
+                     fontsize.labels = 10,
+                     title = "",
+                     title.legend = "Table Availability",
+                     border.col = "white",
+                     position.legend = "bottom")
+
+  })
+
+  #treemap##################################################
+
+  #visNetwork
+  output$network <- renderVisNetwork({
+    visNetwork(nodes, edges,width = '100%',height='100%') %>%
+      visExport() %>%
+      # visOptions(highlightNearest = TRUE,nodesIdSelection = list(enabled = TRUE, selected = "dev_condition")) %>%
+      visOptions(selectedBy = list(variable = "group", selected = "meta")) %>%
+      visEdges(arrows = "from") %>%
+      # visHierarchicalLayout(direction = "RL") %>%
+      # visGroups(groupname = "meta", shape = "icon", icon = list(code = "f1c0", size = 75)) %>%
+      # visGroups(groupname = "source", shape = "icon", icon = list(code = "f1c0", color = "red")) %>%
+      # visGroups(groupname = "cdm", shape = "icon", icon = list(code = "f1c0", color = "yellow")) %>%
+      addFontAwesome() %>%
+      visLegend(zoom = T) %>%
+      visInteraction(hover = TRUE) %>%
+      visEvents(hoverNode = "function(nodes) {
+                  Shiny.onInputChange('current_node_id', nodes);
+                  ;}")
+  })
+
+  output$shiny_return <- renderTable({
+    edges[edges$from==input$current_node_id,]
+
+  },width = '120%')
+
+
+  output$image2 <- renderImage({
+
+
+    list(
+      src = "D:/git/temp/dqueen/R/www/ajou_test.png",
+      contentType = "image/png",
+      alt = "Face"
+    )
+
+  }, deleteFile = FALSE)
+
+
+})
